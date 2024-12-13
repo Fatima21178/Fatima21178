@@ -1,0 +1,75 @@
+#include <iostream>
+#include <stack>
+#include <string>
+#include <cctype> // for isdigit function
+
+using namespace std;
+
+int main() {
+    stack<double> operandStack;
+    stack<char> operatorStack;
+    string expression;
+
+    cout << "Enter an arithmetic expression: ";
+    cin >> expression;
+
+    // Validate input expression
+    for (char c : expression) {
+        if (!isdigit(c) && !(c == '+' || c == '-' || c == '*' || c == '/')) {
+            cout << "Invalid character in expression." << endl;
+            return 1;
+        }
+    }
+
+    for (char c : expression) {
+        if (isdigit(c)) {
+            // Push operand onto stack
+            operandStack.push(c - '0');
+        } else if (c == '+' || c == '-' || c == '*' || c == '/') {
+            // Push operator onto stack
+            operatorStack.push(c);
+        }
+    }
+
+    // Evaluate expression
+    while (!operatorStack.empty()) {
+        char op = operatorStack.top();
+        operatorStack.pop();
+        double operand2 = operandStack.top();
+        operandStack.pop();
+        double operand1 = operandStack.top();
+        operandStack.pop();
+        double result;
+
+        switch (op) {
+            case '+':
+                result = operand1 + operand2;
+                break;
+            case '-':
+                result = operand1 - operand2;
+                break;
+            case '*':
+                result = operand1 * operand2;
+                break;
+            case '/':
+                if (operand2 != 0) {
+                    result = operand1 / operand2;
+                } else {
+                    cout << "Error: Division by zero!" << endl;
+                    return 1;
+                }
+                break;
+        }
+
+        operandStack.push(result);
+    }
+
+    // Display result
+    if (!operandStack.empty()) {
+        cout << "Result: " << operandStack.top() << endl;
+    } else {
+        cout << "Error: Invalid expression!" << endl;
+    }
+
+    return 0;
+}
